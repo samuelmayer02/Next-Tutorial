@@ -72,7 +72,7 @@ styles/
 ### Startseite
 Rendering: SSG oder PPR
 
-Begründung: Auswahl der Editionen + PLZ-Eingabe ist öffentlich, seltene Änderungen. Kann bei Build statisch generiert oder mit dynamischen „Streaming Bits“ ergänzt werden, z. B. Editions-Daten.
+Begründung: Auswahl der Editionen + PLZ-Eingabe ist öffentlich, seltene Änderungen. Kann bei Build statisch generiert oder dynamisch hydratet werden, z. B. Editions-Daten.
 
 ### /about – Über uns
 Rendering: SSG
@@ -92,8 +92,7 @@ Begründung: Starke Interaktivität (Adressverwaltung, Formulare), benötigt Nut
 ### /profile/abos – Abo-Verwaltung
 Rendering: CSR (Client-Side Rendering)
 
-Begründung: Interaktive Elemente (Kündigung, Anzeigen von Abo-Daten), Auth-abhängig
-
+Begründung: Interaktive Elemente (Kündigung, Anzeigen von Abo-Daten)
 ### /profile/password – Passwort ändern
 Rendering: CSR
 
@@ -112,7 +111,7 @@ Begründung: Eingabemaske, Zwischenspeichern von Formulardaten, Validierung – 
 ### /checkout/summary – Bestell-Zusammenfassung
 Rendering: SSR
 
-Begründung: Dynamischer Inhalt aus Datenbank, aber nach Abschluss relativ statisch → ISR sinnvoll zur Lastreduktion.
+Begründung: Dynamischer Inhalt aus Datenbank, aber nach Abschluss relativ statisch
 
 ### /order/success
 Rendering: SSR
@@ -141,9 +140,9 @@ Die verfügbaren Zeitungseditionen sind abhängig von der eingegebenen PLZ.
 Daraus ergibt sich eine Herausforderung: Inhalte sind personalisiert, aber SEO-relevante Inhalte sollten möglichst statisch und indexierbar sein.
 
 Daher: 
-- Primäre Einstiegsseite: /Wird als statische Server Component gerendert. Enthält ein generisches Formular zur Auswahl der PLZ.
+- Die primäre Einstiegsseite wird als statische Server Component gerendert. Enthält ein generisches Formular zur Auswahl der PLZ.
 
-Metadaten werden per `export const metadata` statisch definiert. Die Description der statischen Metadaten soll 
+Metadaten werden per `export const metadata` statisch definiert. Die Description der statischen Metadaten soll dennoch möglichst den Scope der Seite vermitteln, sodass potentielle User den Konfigurator finden, wenn sie über Suchmaschinen nach lokalen Zeitungen suchen.
 
 ```
 export const metadata = {
@@ -187,6 +186,6 @@ Next.js lädt nur den für ein bestimmtes Route-Segment notwendigen JavaScript-C
 - Verwendung von Suspense zum dynamischen Nachladen von Inhalten (z.B. Konfigurationsoptionen im ProductConfigModal (Interaction to Next Paint))
 
 # Optional Bonus
-Ein mögliches optionales Feature zur Verbesserung der Nutzererfahrung und Reichweite wäre die Implementierung eines dynamischen Social-Preview-Bildes. Beim Teilen der Startseite in sozialen Netzwerken wie Facebook oder Twitter könnten personalisierte Vorschau-Bilder angezeigt werden, die automatisch auf Basis der vom Nutzer eingegebenen Postleitzahl generiert werden. Dies ließe sich mit dem ImageResponse-API von Vercel umsetzen, die auf der serverseitigen Rendering-Infrastruktur von Next.js basiert. Das generierte Bild könnte beispielsweise den regionalen Zeitungsnamen, ein Symbolbild der aktuellen Ausgabe sowie den gewählten PLZ-Bereich beinhalten. Diese dynamischen Vorschauen würden in der generateMetadata()-Funktion eingebunden und durch einen Route Handler (z. B. /api/og) erzeugt. Dies erhöht die Relevanz beim Teilen und steigert potenziell die Klickrate – insbesondere bei lokal ausgerichteten Kampagnen.
+Ein mögliches optionales Feature zur Verbesserung der Nutzererfahrung und Reichweite wäre die Implementierung eines dynamischen Social-Preview-Bildes. Beim Teilen der Startseite in sozialen Netzwerken wie Facebook oder Twitter könnten personalisierte Vorschau-Bilder angezeigt werden, die automatisch auf Basis der vom Nutzer eingegebenen Postleitzahl generiert werden. Dies ließe sich mit ImageResponse von Next.js umsetzen. Das generierte Bild könnte beispielsweise den regionalen Zeitungsnamen, ein Symbolbild der aktuellen Ausgabe sowie den gewählten PLZ-Bereich beinhalten. Diese dynamischen Vorschauen würden in der generateMetadata()-Funktion eingebunden und durch einen Route Handler (z. B. /api/og) erzeugt. Dies erhöht die Relevanz beim Teilen und steigert potenziell die Klickrate – insbesondere bei lokal ausgerichteten Kampagnen.
 
-Ein weiteres sinnvolles Feature wäre der gezielte Einsatz einer Server Action im Checkout-Prozess. Sobald der Nutzer die Bestelldaten eingibt, könnte eine Server Action aufgerufen werden, die die Validierung, Speicherung der Bestellung sowie eventuelle Zahlungsabwicklung übernimmt. Nach erfolgreicher Verarbeitung würde der Nutzer direkt auf die Seite /order/success weitergeleitet. Die Vorteile dieser Herangehensweise liegen in der stärkeren Absicherung sensibler Daten, da sie nicht unnötig im Client verarbeitet werden müssen. Zudem vereinfacht sie die Architektur, da auf einen klassischen API-Endpunkt verzichtet werden kann. Durch die serverseitige Weiterleitung lassen sich unnötige Roundtrips vermeiden, was die User Experience verbessert. Die Server Action wäre typischerweise direkt in der page.tsx-Datei des checkout/-Segments implementiert und würde in Kombination mit useFormState() in einem Client Component verwendet werden.
+Ein weiteres sinnvolles Feature wäre der gezielte Einsatz einer Server Action im Checkout-Prozess. Sobald der Nutzer die Bestelldaten eingibt, könnte eine Server Action aufgerufen werden, die die Validierung, Speicherung der Bestellung sowie eventuelle Zahlungsabwicklung übernimmt. Nach erfolgreicher Verarbeitung würde der Nutzer direkt auf die Seite /order/success weitergeleitet. Die Vorteile dieser Herangehensweise liegen in der stärkeren Absicherung sensibler Daten, da sie nicht unnötig im Client verarbeitet werden müssen. Zudem vereinfacht sie die Architektur, da auf einen klassischen API-Endpunkt verzichtet werden kann. Durch die serverseitige Weiterleitung lassen sich unnötige Roundtrips vermeiden, was die User Experience verbessert. Die Server Action wäre typischerweise direkt in der page.tsx-Datei des checkout/-Segments implementiert und würde in einer Client Component verwendet werden.
